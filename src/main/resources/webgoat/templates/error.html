@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title th:text="${error != null ? error : 'WebGoat - Error'}">WebGoat - Error</title>
+    <link rel="shortcut icon" th:href="@{/css/img/favicon.ico}" type="image/x-icon"/>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/main.css}"/>
+    <link rel="stylesheet" type="text/css" th:href="@{/plugins/bootstrap/css/bootstrap.min.css}"/>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/font-awesome.min.css}"/>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/animate.css}"/>
+</head>
+<body>
+<section id="container">
+    <header id="header">
+        <div class="brand">
+            <a th:href="@{/start.mvc}" class="logo"><span>Web</span>Goat</a>
+        </div>
+        <div class="lessonTitle">
+        </div>
+    </header>
+    <section class="main-content-wrapper">
+        <section id="main-content" style="padding: 40px; max-width: 800px; margin: 0 auto;">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title" th:text="${error != null ? error : 'Error al procesar la solicitud'}">Recurso no disponible</h3>
+                </div>
+                <div class="panel-body">
+                    <p class="lead" th:text="${message != null ? message : 'La página o recurso que está buscando no existe o fue movido.'}">Ha ocurrido un error inesperado al procesar su solicitud.</p>
+                    <p class="text-muted">Estado HTTP: <strong th:text="${status != null ? status : '404'}">404</strong></p>
+                    <hr/>
+                    <a th:href="@{/start.mvc}" class="btn btn-primary"><i class="fa fa-home"></i> Volver a WebGoat</a>
+                    <a th:href="@{/login}" class="btn btn-default"><i class="fa fa-sign-in"></i> Iniciar sesión</a>
+                </div>
+            </div>
+        </section>
+    </section>
+</section>
+</body>
+</html>
