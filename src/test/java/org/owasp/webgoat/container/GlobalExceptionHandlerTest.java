@@ -38,7 +38,11 @@ class GlobalExceptionHandlerTest {
     request.setRequestURI("/WebGoat/non_existent_page_123");
     request.addHeader("Accept", "text/html,application/xhtml+xml");
 
-    var ex = new NoResourceFoundException(org.springframework.http.HttpMethod.GET, "/non_existent_page_123");
+    var ex =
+        new NoResourceFoundException(
+            org.springframework.http.HttpMethod.GET,
+            "/non_existent_page_123",
+            "Resource not found");
     Object result = handler.handleNotFound(ex, request);
 
     assertThat(result).isInstanceOf(ModelAndView.class);
@@ -59,7 +63,11 @@ class GlobalExceptionHandlerTest {
     request.setRequestURI("/WebGoat/api/unknown");
     request.addHeader("Accept", "application/json");
 
-    var ex = new NoResourceFoundException(org.springframework.http.HttpMethod.GET, "/api/unknown");
+    var ex =
+        new NoResourceFoundException(
+            org.springframework.http.HttpMethod.GET,
+            "/api/unknown",
+            "Resource not found");
     Object result = handler.handleNotFound(ex, request);
 
     assertThat(result).isInstanceOf(ResponseEntity.class);
