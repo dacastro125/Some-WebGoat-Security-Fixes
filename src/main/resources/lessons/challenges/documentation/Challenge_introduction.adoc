@@ -1,0 +1,26 @@
+=== Introduction
+
+These exercises build on WebGoat's focused lessons. Those lessons teach one security concept at a time. This section
+asks you to combine concepts in a larger application and use them together to reach an objective.
+
+The exercise gives you an outcome without naming the vulnerability or the steps needed to reach it. You decide which
+parts of the application to inspect, where its trust boundaries are, and how separate weaknesses can form one attack
+path. The available help is limited. Use the focused lessons as reference material when you need to revisit a concept,
+then investigate the scenario yourself.
+
+Browser tools, scripts, intercepting proxies, and AI assistants are valid tools for this work. An assistant may produce
+a payload quickly, but you still need to understand why it works, explain the complete attack chain, and determine
+whether a proposed repair removes the underlying weakness.
+
+==== Working with the exercises
+
+- Use the focused lessons when you need background on a security concept.
+
+- Keep your work within the WebGoat application. Do not target other systems or learners.
+
+- Document the components, trust boundaries, and assumptions that make the attack possible.
+
+*Understand how the system behaves, then verify what changes.*
+
+
+image::images/boss.jpg[]
