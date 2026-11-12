@@ -7,7 +7,6 @@ package org.owasp.webgoat.container;
 import lombok.AllArgsConstructor;
 import org.owasp.webgoat.container.users.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -30,13 +29,7 @@ public class WebSecurityConfig {
   private final UserService userDetailsService;
 
   @Bean
-  public SecurityFilterChain filterChain(
-      HttpSecurity http,
-      @Value("${server.ssl.enabled:true}") boolean sslEnabled)
-      throws Exception {
-    if (sslEnabled) {
-      http.requiresChannel(channel -> channel.anyRequest().requiresSecure());
-    }
+  public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
     return http.authorizeHttpRequests(
             auth ->
                 auth.requestMatchers(
