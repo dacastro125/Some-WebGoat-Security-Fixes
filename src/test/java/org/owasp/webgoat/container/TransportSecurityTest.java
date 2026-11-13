@@ -56,7 +56,9 @@ class TransportSecurityTest {
         .isEqualTo("TLSv1.2,TLSv1.3");
 
     assertThat(properties.getProperty("server.ssl.ciphers"))
-        .as("server.ssl.ciphers must include strong AEAD GCM cipher suites")
+        .as("server.ssl.ciphers must include TLS 1.3 and TLS 1.2 AEAD GCM cipher suites")
+        .contains("TLS_AES_128_GCM_SHA256")
+        .contains("TLS_AES_256_GCM_SHA384")
         .contains("TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256")
         .contains("TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384");
   }

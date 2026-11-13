@@ -4,6 +4,11 @@ FROM docker.io/eclipse-temurin:25-jdk-noble
 LABEL name="WebGoat: A deliberately insecure Web Application"
 LABEL maintainer="WebGoat team"
 
+# curl is required by the HEALTHCHECK below; the base image does not ship it.
+RUN apt-get update && \
+  apt-get install -y --no-install-recommends curl && \
+  rm -rf /var/lib/apt/lists/*
+
 RUN \
   useradd -ms /bin/bash webgoat && \
   chgrp -R 0 /home/webgoat && \
@@ -37,4 +42,4 @@ ENTRYPOINT [ "java", \
    "-jar", "webgoat.jar", "--server.address=0.0.0.0" ]
 
 HEALTHCHECK --interval=5s --timeout=3s \
-  CMD curl --fail http://localhost:8080/WebGoat/actuator/health || exit 1
+  CMD curl --fail --insecure https://localhost:8080/WebGoat/actuator/health || exit 1
