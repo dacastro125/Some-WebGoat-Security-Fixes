@@ -19,6 +19,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.header.writers.ReferrerPolicyHeaderWriter.ReferrerPolicy;
 
 /** Security configuration for WebGoat. */
 @Configuration
@@ -72,7 +73,21 @@ public class WebSecurityConfig {
             })
         .logout(logout -> logout.deleteCookies("JSESSIONID").invalidateHttpSession(true))
         .csrf(csrf -> csrf.disable())
-        .headers(headers -> headers.disable())
+        .headers(
+            headers ->
+                headers
+                    .frameOptions(frame -> frame.deny())
+                    .contentTypeOptions(contentType -> {})
+                    .xssProtection(xss -> {})
+                    .httpStrictTransportSecurity(
+                        hsts -> hsts.includeSubDomains(true).maxAgeInSeconds(31536000))
+                    .referrerPolicy(
+                        referrer ->
+                            referrer.policy(ReferrerPolicy.STRICT_ORIGIN_WHEN_CROSS_ORIGIN))
+                    .contentSecurityPolicy(
+                        csp ->
+                            csp.policyDirectives(
+                                "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self' data:; connect-src 'self'")))
         .exceptionHandling(
             handling ->
                 handling.authenticationEntryPoint(new AjaxAuthenticationEntryPoint("/login")))
