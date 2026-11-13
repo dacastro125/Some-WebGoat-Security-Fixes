@@ -14,24 +14,19 @@ import org.apache.commons.lang3.StringUtils;
 import org.owasp.webgoat.container.CurrentUsername;
 import org.owasp.webgoat.container.assignments.AssignmentEndpoint;
 import org.owasp.webgoat.container.assignments.AttackResult;
-import org.springframework.beans.factory.annotation.Value;
+import org.owasp.webgoat.container.mailbox.MailboxService;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.client.RestClientException;
-import org.springframework.web.client.RestTemplate;
 
 @RestController
 public class SimpleMailAssignment implements AssignmentEndpoint {
-  private final String mailURL;
-  private RestTemplate restTemplate;
+  private final MailboxService mailboxService;
 
-  public SimpleMailAssignment(
-      RestTemplate restTemplate, @Value("${webgoat.mail.url}") String mailURL) {
-    this.restTemplate = restTemplate;
-    this.mailURL = mailURL;
+  public SimpleMailAssignment(MailboxService mailboxService) {
+    this.mailboxService = mailboxService;
   }
 
   @PostMapping(
@@ -80,12 +75,10 @@ public class SimpleMailAssignment implements AssignmentEndpoint {
               .sender("webgoat@owasp.org")
               .build();
       try {
-        restTemplate.postForEntity(mailURL, mailEvent, Object.class);
-      } catch (RestClientException e) {
-        return informationMessage(this)
-            .feedback("password-reset-simple.email_failed")
-            .output(e.getMessage())
-            .build();
+        mailboxService.deliver(
+            mailEvent.getSender(), mailEvent.getRecipient(), mailEvent.getTitle(), mailEvent.getContents());
+      } catch (RuntimeException e) {
+        return informationMessage(this).feedback("password-reset-simple.email_failed").build();
       }
       return informationMessage(this)
           .feedback("password-reset-simple.email_send")

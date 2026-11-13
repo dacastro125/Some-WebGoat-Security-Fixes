@@ -14,6 +14,7 @@ import java.util.UUID;
 import org.owasp.webgoat.container.CurrentUsername;
 import org.owasp.webgoat.container.assignments.AssignmentEndpoint;
 import org.owasp.webgoat.container.assignments.AttackResult;
+import org.owasp.webgoat.container.mailbox.MailboxService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -30,23 +31,20 @@ import jakarta.servlet.http.HttpServletRequest;
 @RestController
 public class ResetLinkAssignmentForgotPassword implements AssignmentEndpoint {
 
-  private final RestTemplate restTemplate;
+  private final MailboxService mailboxService;
   private final String webWolfHost;
   private final String webWolfPort;
   private final String webWolfURL;
-  private final String mailURL;
 
   public ResetLinkAssignmentForgotPassword(
-      RestTemplate restTemplate,
+      MailboxService mailboxService,
       @Value("${webwolf.host}") String webWolfHost,
       @Value("${webwolf.port}") String webWolfPort,
-      @Value("${webwolf.url}") String webWolfURL,
-      @Value("${webgoat.mail.url}") String mailURL) {
-    this.restTemplate = restTemplate;
+      @Value("${webwolf.url}") String webWolfURL) {
+    this.mailboxService = mailboxService;
     this.webWolfHost = webWolfHost;
     this.webWolfPort = webWolfPort;
     this.webWolfURL = webWolfURL;
-    this.mailURL = mailURL;
   }
 
   @Nullable
@@ -92,7 +90,7 @@ public class ResetLinkAssignmentForgotPassword implements AssignmentEndpoint {
             .sender("password-reset@webgoat-cloud.net")
             .recipient(username)
             .build();
-    this.restTemplate.postForEntity(mailURL, mail, Object.class);
+    mailboxService.deliver(mail.getSender(), mail.getRecipient(), mail.getTitle(), mail.getContents());
   }
 
   private void fakeClickingLinkEmail(String webWolfURL, String resetLink) {

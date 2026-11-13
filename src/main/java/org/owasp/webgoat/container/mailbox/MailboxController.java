@@ -4,7 +4,6 @@
  */
 package org.owasp.webgoat.container.mailbox;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +29,7 @@ import org.springframework.web.servlet.ModelAndView;
 public class MailboxController {
 
   private final MailboxRepository mailboxRepository;
+  private final MailboxService mailboxService;
 
   @GetMapping("/mail")
   public ModelAndView mail(Authentication authentication, Model model) {
@@ -58,10 +58,9 @@ public class MailboxController {
   @PostMapping("/mail")
   @ResponseStatus(HttpStatus.CREATED)
   public void sendEmail(@RequestBody Email email) {
-    // time is @JsonIgnore (server-controlled). Stamp the receipt time here: Spring Boot 4 / Jackson
-    // 3 deserializes via the all-args constructor, which bypasses the field's default initializer.
-    email.setTime(LocalDateTime.now());
-    mailboxRepository.save(email);
+    // time is @JsonIgnore (server-controlled); MailboxService stamps the receipt time because Spring
+    // Boot 4 / Jackson 3 deserializes via the all-args constructor, bypassing the field initializer.
+    mailboxService.deliver(email);
   }
 
   @DeleteMapping("/mail")

@@ -13,9 +13,9 @@ import java.time.LocalDateTime;
 import lombok.extern.slf4j.Slf4j;
 import org.owasp.webgoat.container.assignments.AssignmentEndpoint;
 import org.owasp.webgoat.container.assignments.AttackResult;
+import org.owasp.webgoat.container.mailbox.MailboxService;
 import org.owasp.webgoat.lessons.challenges.Email;
 import org.owasp.webgoat.lessons.challenges.Flags;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -27,7 +27,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.client.RestTemplate;
 
 @RestController
 @Slf4j
@@ -47,14 +46,11 @@ public class Assignment7 implements AssignmentEndpoint {
           + "Team WebGoat";
 
   private final Flags flags;
-  private final RestTemplate restTemplate;
-  private final String mailURL;
+  private final MailboxService mailboxService;
 
-  public Assignment7(
-      Flags flags, RestTemplate restTemplate, @Value("${webgoat.mail.url}") String mailURL) {
+  public Assignment7(Flags flags, MailboxService mailboxService) {
     this.flags = flags;
-    this.restTemplate = restTemplate;
-    this.mailURL = mailURL;
+    this.mailboxService = mailboxService;
   }
 
   @GetMapping("/challenge/7/reset-password/{link}")
@@ -91,7 +87,8 @@ public class Assignment7 implements AssignmentEndpoint {
                 .recipient(username)
                 .time(LocalDateTime.now())
                 .build();
-        restTemplate.postForEntity(mailURL, mail, Object.class);
+        mailboxService.deliver(
+            mail.getSender(), mail.getRecipient(), mail.getTitle(), mail.getContents());
       }
     }
     return success(this).feedback("email.send").feedbackArgs(email).build();
