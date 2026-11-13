@@ -87,7 +87,7 @@ public class WebSecurityConfig {
                     .contentSecurityPolicy(
                         csp ->
                             csp.policyDirectives(
-                                "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self' data:; connect-src 'self'")))
+                                "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline' https://code.jquery.com; img-src 'self' data: https://code.jquery.com; font-src 'self' data:; connect-src 'self'")))
         .exceptionHandling(
             handling ->
                 handling.authenticationEntryPoint(new AjaxAuthenticationEntryPoint("/login")))

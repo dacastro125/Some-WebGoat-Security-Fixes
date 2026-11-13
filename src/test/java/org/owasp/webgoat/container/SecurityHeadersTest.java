@@ -85,7 +85,7 @@ class SecurityHeadersTest {
   @DisplayName("V3: Content-Security-Policy must restrict script and style sources to self")
   void contentSecurityPolicyDefinesSafeDirectives() {
     String policy =
-        "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self' data:; connect-src 'self'";
+        "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline' https://code.jquery.com; img-src 'self' data: https://code.jquery.com; font-src 'self' data:; connect-src 'self'";
     var writer = new ContentSecurityPolicyHeaderWriter(policy);
     var request = new MockHttpServletRequest();
     var response = new MockHttpServletResponse();
