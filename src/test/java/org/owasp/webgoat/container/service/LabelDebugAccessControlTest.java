@@ -8,6 +8,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -76,6 +77,7 @@ class LabelDebugAccessControlTest {
   void regularUserIsForbiddenFromDebugEndpointsAndStateRemainsUnchanged(String url)
       throws Exception {
     mockMvc.perform(get(url)).andExpect(status().isForbidden());
+    mockMvc.perform(post(url)).andExpect(status().isForbidden());
     assertThat(labelDebugger.isEnabled()).isFalse();
   }
 
@@ -99,17 +101,28 @@ class LabelDebugAccessControlTest {
         .andExpect(jsonPath("$.success").value(true));
 
     mockMvc
-        .perform(get(DEBUG_URL).param("enabled", "true"))
+        .perform(post(DEBUG_URL).param("enabled", "true"))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.enabled").value(true))
         .andExpect(jsonPath("$.success").value(true));
     assertThat(labelDebugger.isEnabled()).isTrue();
 
     mockMvc
-        .perform(get(DEBUG_URL).param("enabled", "false"))
+        .perform(post(DEBUG_URL).param("enabled", "false"))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.enabled").value(false))
         .andExpect(jsonPath("$.success").value(true));
+    assertThat(labelDebugger.isEnabled()).isFalse();
+  }
+
+  @Test
+  @WithMockUser(username = "admin", authorities = "WEBGOAT_ADMIN")
+  void getWithEnabledParameterIsReadOnlyForAdmin() throws Exception {
+    // A cross-site GET (allowed by SameSite=Lax) must not be able to change shared state.
+    mockMvc
+        .perform(get(DEBUG_URL).param("enabled", "true"))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.enabled").value(false));
     assertThat(labelDebugger.isEnabled()).isFalse();
   }
 

@@ -21,6 +21,8 @@ define([
             var data = (options.data || {});
             if(this.enabled != undefined) {
             	options.data = { enabled: !this.enabled };
+            	// Toggling changes server state, so it must be a POST (GET is read-only).
+            	options.type = 'POST';
             }
             return Backbone.Collection.prototype.fetch.call(this, options);
 		},

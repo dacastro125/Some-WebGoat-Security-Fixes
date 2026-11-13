@@ -13,7 +13,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -38,7 +39,7 @@ public class LabelDebugService {
    *
    * @return a {@link org.springframework.http.ResponseEntity} object.
    */
-  @RequestMapping(path = URL_DEBUG_LABELS_MVC, produces = MediaType.APPLICATION_JSON_VALUE)
+  @GetMapping(path = URL_DEBUG_LABELS_MVC, produces = MediaType.APPLICATION_JSON_VALUE)
   public @ResponseBody ResponseEntity<Map<String, Object>> checkDebuggingStatus() {
     log.debug("Checking label debugging, it is {}", labelDebugger.isEnabled());
     Map<String, Object> result = createResponse(labelDebugger.isEnabled());
@@ -46,12 +47,14 @@ public class LabelDebugService {
   }
 
   /**
-   * Sets the enabled flag on the label debugger to the given parameter
+   * Sets the enabled flag on the label debugger to the given parameter. State changes are POST-only:
+   * a GET (e.g. a cross-site link followed by an administrator, which SameSite=Lax still allows)
+   * only reads the current state.
    *
    * @param enabled {@link org.owasp.webgoat.container.session.LabelDebugger} object
    * @return a {@link org.springframework.http.ResponseEntity} object.
    */
-  @RequestMapping(
+  @PostMapping(
       value = URL_DEBUG_LABELS_MVC,
       produces = MediaType.APPLICATION_JSON_VALUE,
       params = KEY_ENABLED)
