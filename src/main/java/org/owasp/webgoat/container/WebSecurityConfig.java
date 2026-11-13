@@ -52,6 +52,9 @@ public class WebSecurityConfig {
                     // Administration endpoints: restricted to WEBGOAT_ADMIN only.
                     .requestMatchers("/service/admin/**")
                     .hasAuthority("WEBGOAT_ADMIN")
+                    // Label debugging reads/mutates shared LabelDebugger state: admin-only.
+                    .requestMatchers("/service/debug/**")
+                    .hasAuthority("WEBGOAT_ADMIN")
                     .anyRequest()
                     .authenticated())
         .formLogin(

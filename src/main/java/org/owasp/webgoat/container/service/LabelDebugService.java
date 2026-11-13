@@ -11,14 +11,20 @@ import org.owasp.webgoat.container.session.LabelDebugger;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+/**
+ * Exposes global label debugging controls strictly to {@code WEBGOAT_ADMIN} accounts, because
+ * {@link LabelDebugger} holds shared application-wide state.
+ */
 @Controller
 @Slf4j
 @AllArgsConstructor
+@PreAuthorize("hasAuthority('WEBGOAT_ADMIN')")
 public class LabelDebugService {
 
   private static final String URL_DEBUG_LABELS_MVC = "/service/debug/labels.mvc";
